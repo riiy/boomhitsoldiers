@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="jquery-1.11.1.js"></script>
+<style>
+body {
+    background-image: url("background.jpg");
+    background-size: cover;
+}
+table, td, th {
+    top: 50px;
+    border-collapse: collapse;
+    border: 10px solid black;
+    padding: 50px;
+    z-index: -1;
+}
+.circle {
+    width: 40px;
+    height: 40px;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+    position: absolute;
+    z-index: 1;
+}
+</style>
+</head>
+
+<body>
+    <div id="topdiv">
+        <div>
+            <table id="table" align="center" style="margin-top:10px;">
+                <tr> <th></th> <th></th> <th></th> <th></th> </tr>
+                <tr> <th></th> <th></th> <th></th> <th></th> </tr>
+                <tr> <th></th> <th></th> <th></th> <th></th> </tr>
+                <tr> <th></th> <th></th> <th></th> <th></th> </tr>
+            </table>
+        </div><br>
+        <div id="boom0" class="boom"></div>
+        <div id="boom1" class="boom"></div>
+        <p id="p">color:[]</p>
+        <p id="pp">1, 2</p>
+        <p id="ppp">2</p> 
+    </div>
+</body>
+
+<script>
+var windowWidth  = $(window).width();
+var windowHeigth = $(window).height();
+
+var border = 10;
+var padding = 50;
+var boomWidth  = 35;
+var boomGrowup = 20;
+
+var soldierWidth  = 30;
+var soldierGrowup = 10;
+
+var tableMarginTop = 50;
+var tableMarginLeft = (windowWidth / 2) - (padding * 4) - (border * 2.5);
+
+var xLocations = new Array( new Array(5), new Array(5) );
+var yLocations = new Array( new Array(5), new Array(5) );
+for ( var x=0; x<5; x++ ) {
+    xLocations[x] = new Array();
+    yLocations[x] = new Array();
+    for ( var y=0; y<5; y++ ) {
+        xLocations[x][y] = tableMarginLeft + (border * (y+0.5)) + (padding * y * 2);
+        yLocations[x][y] = tableMarginTop  + (border * (x+0.5)) + (padding * x * 2);
+        addDiv(x, y);
+    }
+}
+
+function addDiv(x, y){
+    var dv = document.createElement('div');
+    dv.id = "div" + x + y;
+    dv.className = "circle";
+    document.getElementById("topdiv").appendChild(dv);
+}
+
+var clickFlag = 0;
+var turnFlag  = 0;
+var lastX;
+var lastY
+var lastId;
+var lastBkgd;
+
+$(document).ready(function(){
+    initBoard();
+    $("#table").css({"margin-top": tableMarginTop, "border": border, "padding": padding});
+    //document.getElementById("pp").innerHTML = windowWidth + ", " + windowHeigth;
+
+    for ( var x=0; x<5; x++ ) {
+        for ( var y=0; y<5; y++ ) {
+            $("#div"+x+y).click(function(){
+                clickChess(this);
+            });
+        }
+    }
+});
+
+function initBoard () {
+    var bkgd = "green";
+    for ( var x=0; x<5; x++ ) {
+        for ( var y=0; y<5; y++ ) {
+            if ( x>2 ) {
+                bkgd = "";
+            }
+            setChess ("div"+x+y, soldierWidth, soldierWidth, xLocations[x][y]-soldierWidth/2, yLocations[x][y]-soldierWidth/2, bkgd);
+        }
+    }
+    setChess ("div41", boomWidth, boomWidth, xLocations[4][1]-boomWidth/2, yLocations[4][1]-boomWidth/2, "red");
+    setChess ("div43", boomWidth, boomWidth, xLocations[4][3]-boomWidth/2, yLocations[4][3]-boomWidth/2, "red");
+}
+
+function setChess (id, width, height, left, tp, bkgd) {
+    var dv = document.getElementById(id);
+    dv.style.width  = width + "px";
+    dv.style.height = height + "px";
+    dv.style.left   = left + "px";
+    dv.style.top    = tp + "px";
+    dv.style.background = bkgd;
+    if(bkgd==="red"){
+    	document.getElementById(id).innerHTML= "炮";
+    }else if (bkgd==="green") {
+    	document.getElementById(id).innerHTML= "兵";
+    }
+}
+
+function clickChess (ths) {
+    var id = ths.id;
+    var bkgd = ths.style.background;
+    var xy = id.match(/(\d+)/g)[0];
+    var x = xy[0];
+    var y = xy[1];
+    //document.getElementById("p").innerHTML = "[" + bkgd + "][" + id + "][" + x + "][" + y + "]";
+    var z = lastX - lastY;
+    if ( turnFlag == 0 ) { // its boom's turn
+        //document.getElementById("ppp").innerHTML = "[" + bkgd + "][" + id + "][" + x + "][" + y + "][" + z + "]";
+        if ( clickFlag == 0 ) { // no boom is clicked
+            if ( bkgd == "red") { // only boom can be clicked
+                setChess(id, boomWidth+boomGrowup, boomWidth+boomGrowup, xLocations[x][y]-boomWidth/2-boomGrowup/2, yLocations[x][y]-boomWidth/2-boomGrowup/2, bkgd);
+                //document.getElementById(this).innerHTML= "大";
+                backupLastClick(x, y, id, bkgd);
+                clickFlag = 1;
+            }
+        }
+        else { // any boom has been clicked
+            if ( id == lastId ) { // boom return to original size
+                setChess(id, boomWidth, boomWidth, xLocations[x][y]-boomWidth/2, yLocations[x][y]-boomWidth/2, bkgd);
+                backupLastClick("", "", "", "");
+                clickFlag = 0;
+            }
+            else if ( bkgd == "red" ) { // another boom is clicked
+                setChess(lastId, boomWidth, boomWidth, xLocations[lastX][lastY]-boomWidth/2, yLocations[lastX][lastY]-boomWidth/2, lastBkgd);
+                setChess(id, boomWidth+boomGrowup, boomWidth+boomGrowup, xLocations[x][y]-boomWidth/2-boomGrowup/2, yLocations[x][y]-boomWidth/2-boomGrowup/2, bkgd);
+                backupLastClick(x, y, id, bkgd);
+            }
+            else if ( bkgd == "green" ) { // click soldier
+                if ( (lastY==y) && ((lastX-x==2)||(x-lastX==2)) ) {
+                    var xAdd1Tmp = (lastX*1 + x*1 ) / 2;
+                    document.getElementById("ppp").innerHTML = "[" + xAdd1Tmp + "][" + x + "][" + lastX + "]";
+                    var bkgdTmp = document.getElementById("div"+xAdd1Tmp+y).style.background;
+                    if ( bkgdTmp == "" ) {
+                        setChess(lastId, soldierWidth, soldierWidth, xLocations[lastX][lastY]-soldierWidth/2, yLocations[lastX][lastY]-soldierWidth/2, "");
+                        setChess(id, boomWidth, boomWidth, xLocations[x][y]-boomWidth/2, yLocations[x][y]-boomWidth/2, lastBkgd);
+                        backupLastClick("", "", "", "");
+                        turnFlag = 1;
+                        clickFlag = 0;
+                    }
+                }
+                else if ( (lastX==x) && ((lastY-y==2)||(y-lastY==2)) ) {
+                    var yAdd1Tmp = (y*1 + lastY*1) / 2;
+                    var bkgdTmp = document.getElementById("div"+x+yAdd1Tmp).style.background;
+                    if ( bkgdTmp == "" ) {
+                        setChess(lastId, soldierWidth, soldierWidth, xLocations[lastX][lastY]-soldierWidth/2, yLocations[lastX][lastY]-soldierWidth/2, "");
+                        setChess(id, boomWidth, boomWidth, xLocations[x][y]-boomWidth/2, yLocations[x][y]-boomWidth/2, lastBkgd);
+                        backupLastClick("", "", "", "");
+                        turnFlag = 1;
+                        clickFlag = 0;
+                    }
+                }
+            }
+            else { // move to free place
+                if ( ((lastX-x==1)&&(lastY==y)) ||
+                     ((x-lastX==1)&&(lastY==y)) ||
+                     ((lastY-y==1)&&(lastX==x)) ||
+                     ((y-lastY==1)&&(lastX==x)) ) {
+                    setChess(id, boomWidth, boomWidth, xLocations[x][y]-boomWidth/2, yLocations[x][y]-boomWidth/2, lastBkgd);
+                    setChess(lastId, soldierWidth, soldierWidth, xLocations[lastX][lastY]-soldierWidth/2, yLocations[lastX][lastY]-soldierWidth/2, "");
+                    backupLastClick("", "", "", "");
+                    clickFlag = 0;
+                    turnFlag = 1;
+                }
+            }
+        }
+    }
+    else { // its soldier's turn
+        if ( clickFlag == 0 ) { // no soldier is clicked
+            if ( bkgd == "green" ) { // only soldier can be clicked
+                setChess(id, soldierWidth+soldierGrowup, soldierWidth+soldierGrowup, xLocations[x][y]-soldierWidth/2-soldierGrowup/2, yLocations[x][y]-soldierWidth/2-soldierGrowup/2, bkgd);
+                backupLastClick(x, y, id, bkgd);
+                clickFlag = 1;
+            }
+        }
+        else if ( id == lastId ) { // soldier return to original size
+            setChess(id, soldierWidth, soldierWidth, xLocations[x][y]-soldierWidth/2, yLocations[x][y]-soldierWidth/2, bkgd);
+            backupLastClick("", "", "", "");
+            clickFlag = 0;
+        }
+        else if ( bkgd == "green" ) { // another soldier is clicked
+            setChess(id, soldierWidth+soldierGrowup, soldierWidth+soldierGrowup, xLocations[x][y]-soldierWidth/2-soldierGrowup/2, yLocations[x][y]-soldierWidth/2-soldierGrowup/2, bkgd);
+            setChess(lastId, soldierWidth, soldierWidth, xLocations[lastX][lastY]-soldierWidth/2, yLocations[lastX][lastY]-soldierWidth/2, lastBkgd);
+            backupLastClick(x, y, id, bkgd);
+        }
+        else if ( bkgd == "" ) { // move to free place
+            if ( ((lastX-x==1)&&(lastY==y)) ||
+                 ((x-lastX==1)&&(lastY==y)) ||
+                 ((lastY-y==1)&&(lastX==x)) ||
+                 ((y-lastY==1)&&(lastX==x)) ) {
+                setChess(id, soldierWidth, soldierWidth, xLocations[x][y]-soldierWidth/2, yLocations[x][y]-soldierWidth/2, lastBkgd);
+                setChess(lastId, soldierWidth, soldierWidth, xLocations[lastX][lastY]-soldierWidth/2, yLocations[lastX][lastY]-soldierWidth/2, "");
+                backupLastClick("", "", "", "");
+                clickFlag = 0;
+                turnFlag = 0;
+            }
+        }
+    }
+}
+
+function backupLastClick (lx, ly, li, lb) {
+    lastX = lx;
+    lastY = ly;
+    lastId = li;
+    lastBkgd = lb;
+}
+
+</script>
+
+</html>
