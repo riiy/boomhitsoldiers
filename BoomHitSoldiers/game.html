@@ -38,9 +38,10 @@ table, td, th {
         </div><br>
         <div id="boom0" class="boom"></div>
         <div id="boom1" class="boom"></div>
-        <p id="p">color:[]</p>
-        <p id="pp">1, 2</p>
-        <p id="ppp">2</p> 
+        <button id = "btn" onclick="initBoard()">RESTART</button>
+        <!--p id="p">color:[]</p--!>
+        <!--p id="pp">1, 2</p--!>
+        <!--p id="ppp">2</p--!>
     </div>
 </body>
 
@@ -50,7 +51,7 @@ var windowHeigth = $(window).height();
 
 var border = 10;
 var padding = 50;
-var boomWidth  = 35;
+var boomWidth  = 40;
 var boomGrowup = 20;
 
 var soldierWidth  = 30;
@@ -84,12 +85,13 @@ var lastX;
 var lastY
 var lastId;
 var lastBkgd;
+var stepTotal = 0;
+var soldierCnt = 15;
 
 $(document).ready(function(){
     initBoard();
     $("#table").css({"margin-top": tableMarginTop, "border": border, "padding": padding});
     //document.getElementById("pp").innerHTML = windowWidth + ", " + windowHeigth;
-
     for ( var x=0; x<5; x++ ) {
         for ( var y=0; y<5; y++ ) {
             $("#div"+x+y).click(function(){
@@ -100,6 +102,10 @@ $(document).ready(function(){
 });
 
 function initBoard () {
+    clickFlag = 0;
+    turnFlag  = 0;
+    stepTotal = 0;
+    soldierCnt = 15;
     var bkgd = "green";
     for ( var x=0; x<5; x++ ) {
         for ( var y=0; y<5; y++ ) {
@@ -120,11 +126,6 @@ function setChess (id, width, height, left, tp, bkgd) {
     dv.style.left   = left + "px";
     dv.style.top    = tp + "px";
     dv.style.background = bkgd;
-    if(bkgd==="red"){
-    	document.getElementById(id).innerHTML= "";
-    }else if (bkgd==="green") {
-    	document.getElementById(id).innerHTML= "";
-    }
 }
 
 function clickChess (ths) {
@@ -140,7 +141,6 @@ function clickChess (ths) {
         if ( clickFlag == 0 ) { // no boom is clicked
             if ( bkgd == "red") { // only boom can be clicked
                 setChess(id, boomWidth+boomGrowup, boomWidth+boomGrowup, xLocations[x][y]-boomWidth/2-boomGrowup/2, yLocations[x][y]-boomWidth/2-boomGrowup/2, bkgd);
-                //document.getElementById(this).innerHTML= "大";
                 backupLastClick(x, y, id, bkgd);
                 clickFlag = 1;
             }
@@ -158,15 +158,14 @@ function clickChess (ths) {
             }
             else if ( bkgd == "green" ) { // click soldier
                 if ( (lastY==y) && ((lastX-x==2)||(x-lastX==2)) ) {
-                    var xAdd1Tmp = (lastX*1 + x*1 ) / 2;
-                    document.getElementById("ppp").innerHTML = "[" + xAdd1Tmp + "][" + x + "][" + lastX + "]";
+                    var xAdd1Tmp = (lastX*1 + x*1 ) / 2; // *1 is used to transfer it to number
+                    //document.getElementById("ppp").innerHTML = "[" + xAdd1Tmp + "][" + x + "][" + lastX + "]";
                     var bkgdTmp = document.getElementById("div"+xAdd1Tmp+y).style.background;
                     if ( bkgdTmp == "" ) {
                         setChess(lastId, soldierWidth, soldierWidth, xLocations[lastX][lastY]-soldierWidth/2, yLocations[lastX][lastY]-soldierWidth/2, "");
                         setChess(id, boomWidth, boomWidth, xLocations[x][y]-boomWidth/2, yLocations[x][y]-boomWidth/2, lastBkgd);
                         backupLastClick("", "", "", "");
-                        turnFlag = 1;
-                        clickFlag = 0;
+                        itsSoldierTurn("minusOne");
                     }
                 }
                 else if ( (lastX==x) && ((lastY-y==2)||(y-lastY==2)) ) {
@@ -176,8 +175,7 @@ function clickChess (ths) {
                         setChess(lastId, soldierWidth, soldierWidth, xLocations[lastX][lastY]-soldierWidth/2, yLocations[lastX][lastY]-soldierWidth/2, "");
                         setChess(id, boomWidth, boomWidth, xLocations[x][y]-boomWidth/2, yLocations[x][y]-boomWidth/2, lastBkgd);
                         backupLastClick("", "", "", "");
-                        turnFlag = 1;
-                        clickFlag = 0;
+                        itsSoldierTurn("minusOne");
                     }
                 }
             }
@@ -189,8 +187,7 @@ function clickChess (ths) {
                     setChess(id, boomWidth, boomWidth, xLocations[x][y]-boomWidth/2, yLocations[x][y]-boomWidth/2, lastBkgd);
                     setChess(lastId, soldierWidth, soldierWidth, xLocations[lastX][lastY]-soldierWidth/2, yLocations[lastX][lastY]-soldierWidth/2, "");
                     backupLastClick("", "", "", "");
-                    clickFlag = 0;
-                    turnFlag = 1;
+                    itsSoldierTurn();
                 }
             }
         }
@@ -223,6 +220,7 @@ function clickChess (ths) {
                 backupLastClick("", "", "", "");
                 clickFlag = 0;
                 turnFlag = 0;
+                ifBoomLose();
             }
         }
     }
@@ -233,6 +231,54 @@ function backupLastClick (lx, ly, li, lb) {
     lastY = ly;
     lastId = li;
     lastBkgd = lb;
+}
+
+function itsSoldierTurn (minusOne) {
+    clickFlag = 0;
+    turnFlag = 1;
+    stepTotal++;
+    if ( minusOne == "minusOne" ) {
+        soldierCnt = soldierCnt - 1;
+    }
+    if ( soldierCnt == 0 ) {
+        alert("Boom Win! Boom has instant " + stepTotal + " steps!");
+    }
+}
+
+function ifBoomLose () {
+    var lose = 0;
+    for ( var x=0; x<5; x++ ) {
+        for ( var y=0; y<5; y++ ) {
+            var bkgd = document.getElementById("div"+x+y).style.background;
+            if ( bkgd == "red" ) {
+                if ( isSoldierHere(x, y-1) &&
+                     isSoldierHere(x, y+1) &&
+                     isSoldierHere(x-1, y) &&
+                     isSoldierHere(x+1, y) ) {
+                    lose++;
+                    if ( lose == 2 ) {
+                        alert("Boom Lost! Boom has instant " + stepTotal + " steps!");
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+function isSoldierHere (x, y) {
+    if ( (x>-1) && (x<5) && (y>-1) && (y<5) ) {
+        var bkgd = document.getElementById("div"+x+y).style.background;
+        if ( (bkgd=="green") || (bkgd=="red") ) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        return true;
+    }
 }
 
 </script>
