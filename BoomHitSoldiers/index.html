@@ -2,30 +2,9 @@
 <html>
 <head>
     <script src="js/jquery-1.11.1.js"></script>
-    <style>
-        body {
-            background-image: url("background.jpg");
-            background-size: cover;
-        }
-
-        table, td, th {
-            top: 50px;
-            border-collapse: collapse;
-            border: 10px solid black;
-            padding: 50px;
-            z-index: -1;
-        }
-
-        .circle {
-            width: 40px;
-            height: 40px;
-            -moz-border-radius: 50px;
-            -webkit-border-radius: 50px;
-            border-radius: 50px;
-            position: absolute;
-            z-index: 1;
-        }
-    </style>
+    <script src="js/board.js"></script>
+    <script src="js/roles.js"></script>
+    <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
@@ -125,23 +104,6 @@ $(document).ready(function () {
     }
 });
 
-function initBoard() {
-    clickFlag = 0;
-    turnFlag = 0;
-    stepTotal = 0;
-    soldierCnt = 15;
-    var bkgd = "green";
-    for (var x = 0; x < 5; x++) {
-        for (var y = 0; y < 5; y++) {
-            if (x > 2) {
-                bkgd = "";
-            }
-            setChess("div" + x + y, soldierWidth, soldierWidth, xLocations[x][y] - soldierWidth / 2, yLocations[x][y] - soldierWidth / 2, bkgd);
-        }
-    }
-    setChess("div41", boomWidth, boomWidth, xLocations[4][1] - boomWidth / 2, yLocations[4][1] - boomWidth / 2, "red");
-    setChess("div43", boomWidth, boomWidth, xLocations[4][3] - boomWidth / 2, yLocations[4][3] - boomWidth / 2, "red");
-}
 
 function setChess(id, width, height, left, tp, bkgd) {
     var dv = document.getElementById(id);
