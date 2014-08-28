@@ -5,7 +5,18 @@
 4、Boom可在隔空（即这一格无其它棋子）击杀一Soldier,并且位移至该Soldier位置，Soldier无此技能；
 5、Soldier围住所有Boom使其无法移动，Soldier胜。Boom个数大于等于Soldier个数，Boom胜；
 
-元素：
-1、Solder
-2、Boom
-3、Board
+developer guide
+使用HTML5+CSS+JS开发
+
+游戏界面元素：
+1、Soldier（一类棋子，数量有优势）
+2、Boom（另一类棋子，数量少但有击杀技能，补充数量劣势）
+3、Board（平台展示，承载棋子“战场”）
+4、其它修饰及运行选择项
+
+元素行为：
+1、Soldier，可以向上向上、下、左、右无其它棋子处走一个距离单位，以贪心算法靠近最近的Boom
+2、Boom，向上、下、左、右无其它棋子处走一步距离单位，以贪心算法远离所有Soldier（寻找最空旷的空间）；
+如果有机会击杀Soldier,击杀之，击杀规则是与Soldier之间无其它棋子并且相距两个直线距离单位
+3、Board，无法位移，从开始到战斗结束不变化，不参与战斗
+
