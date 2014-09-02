@@ -48,20 +48,15 @@
 </div>
 </body>
 <script>
-    function addDiv(x, y) {
-        var dv = document.createElement('div');
-        dv.id = "div" + x + y;
-        dv.className = "circle";
-        document.getElementById("topdiv").appendChild(dv);
-    }
-    $(document).ready(function(){
-            for(var x; x < 5; x++){
-                for(var y; y < 5; y++){
-                    addDiv(x, y);
-                }
-            }
-        }
-    );
+//    function addDiv(this_class,x, y) {
+//        var dv = document.createElement('div');
+//        dv.id = "div" + x + y;
+//        dv.className = "circle";
+//        document.getElementById(this_class).appendChild(dv);
+//    }
+
+                            document.getElementById("topdiv").appendChild(dv);
+
 </script>
 <!--<script>-->
     <!--var windowWidth = $(window).width();-->
