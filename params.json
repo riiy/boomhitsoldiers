@@ -1,6 +1,6 @@
 {
   "name": "Boomhitsoldiers",
   "tagline": "",
-  "body": "boomhitsoldiers\r\n===============\r\n###玩法：\r\n1.选择Boom(red)或者soldier(green)任一方；\r\n2.Boom先Soldier后；\r\n3.双方每次可使任一子也仅一子向上、下、左、右无其它棋子处走一步棋；\r\n4.Boom可在隔空（即这一格无其它棋子）击杀一Soldier,并且位移至该Soldier位置，Soldier无此技能；\r\n5.Soldier围住所有Boom使其无法移动，Soldier胜。Boom个数大于等于Soldier个数，Boom胜；\r\n\r\n###元素：\r\n1.Solder\r\n2.Boom\r\n3.Board\r\n",
+  "body": "boomhitsoldiers\r\n===============\r\n###玩法：\r\n1.选择Boom(red)或者soldier(green)任一方；\r\n2.Boom先Soldier后；\r\n3.双方每次可使任一子也仅一子向上、下、左、右无其它棋子处走一步棋；\r\n4.Boom可在隔空（即这一格无其它棋子）击杀一Soldier,并且位移至该Soldier位置，Soldier无此技能；\r\n5.Soldier围住所有Boom使其无法移动，Soldier胜。Boom个数大于等于Soldier个数，Boom胜；\r\n\r\n###元素：\r\n1.Solder\r\n2.Boom\r\n3.Board\r\n\r\n[开始游戏](BoomHitSoldiers/)\r\n",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
