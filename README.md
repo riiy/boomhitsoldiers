@@ -11,3 +11,5 @@ boomhitsoldiers
 1.Solder
 2.Boom
 3.Board
+
+[开始游戏](BoomHitSoldiers/)
