@@ -12,4 +12,4 @@ boomhitsoldiers
 2.Boom
 3.Board
 
-[开始游戏](http://congminghaoxue.github.io/boomhitsoldiers/BoomHitSoldiers/)
+[开始游戏](http://riiy.github.io/boomhitsoldiers/BoomHitSoldiers/)
